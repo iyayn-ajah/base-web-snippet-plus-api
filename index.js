@@ -404,13 +404,18 @@ app.get('/codes/:filename', (req, res) => {
         const langColor = getLanguageColor(language);
         const langName = getLanguageDisplayName(language);
         
+        // Gunakan JSON.stringify agar aman dari karakter kutip pada nama file
+        const safeFilename = JSON.stringify(filename);
+        const safeLangColor = JSON.stringify(langColor);
+        const safeLanguage = JSON.stringify(language);
+
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
         res.send(`<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>${filename} - CodesVault</title>
+    <title>${escapeHtml(filename)} - CodesVault</title>
     <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg?format=png&name=900x900">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
@@ -469,6 +474,7 @@ app.get('/codes/:filename', (req, res) => {
             justify-content: center;
             gap: 0.5rem;
             white-space: nowrap;
+            cursor: pointer;
         }
         .dark-mode .btn-primary { background: #2d3748; border-color: #4a5568; color: #f1f5f9; }
         .btn-primary:hover { transform: scale(1.02) translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2); }
@@ -527,26 +533,26 @@ app.get('/codes/:filename', (req, res) => {
                                 <div id="logoSvg"></div>
                             </div>
                             <div>
-                                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white break-all">${filename}</h1>
+                                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white break-all">${escapeHtml(filename)}</h1>
                                 <div class="flex items-center gap-2 mt-1">
                                     <div class="w-2 h-2 rounded-full" id="langBullet"></div>
-                                    <span class="text-xs font-bold uppercase tracking-wide" id="langNameSpan">${langName}</span>
+                                    <span class="text-xs font-bold uppercase tracking-wide" id="langNameSpan">${escapeHtml(langName)}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="flex gap-3 flex-wrap">
-                        <button onclick="copyCode()" class="btn-primary">
+                        <button id="btnCopy" type="button" class="btn-primary">
                             <span class="material-icons text-sm">content_copy</span>
-                            Copy Code
+                            <span>Copy Code</span>
                         </button>
-                        <button onclick="downloadCode()" class="btn-primary">
+                        <button id="btnDownload" type="button" class="btn-primary">
                             <span class="material-icons text-sm">download</span>
-                            Download
+                            <span>Download</span>
                         </button>
-                        <button onclick="viewRaw()" class="btn-primary">
+                        <button id="btnRaw" type="button" class="btn-primary">
                             <span class="material-icons text-sm">code</span>
-                            Raw
+                            <span>Raw</span>
                         </button>
                     </div>
                 </div>
@@ -559,7 +565,7 @@ app.get('/codes/:filename', (req, res) => {
                     <div class="w-3 h-3 rounded-full bg-red-500"></div>
                     <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span class="text-xs text-gray-500 dark:text-gray-400 ml-2 font-mono">${filename}</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 ml-2 font-mono">${escapeHtml(filename)}</span>
                 </div>
             </div>
             <div class="p-5 code-preview overflow-auto max-h-[70vh]">
@@ -580,52 +586,37 @@ app.get('/codes/:filename', (req, res) => {
 </section>
 
 <script>
-    const langColor = '${langColor}';
-    const langExt = '${language}';
+    const currentFilename = ${safeFilename};
+    const langColor = ${safeLangColor};
+    const langExt = ${safeLanguage};
     
     function getLogoSvg(color, ext) {
-        const rect = '<rect width="24" height="24" rx="5" fill="' + color + '"/>';
-        if (ext === 'python') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="monospace">PY</text></svg>';
-        } else if (ext === 'javascript') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="monospace">JS</text></svg>';
-        } else if (ext === 'typescript') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">TS</text></svg>';
-        } else if (ext === 'php') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">PHP</text></svg>';
-        } else if (ext === 'html') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="monospace">&lt;/&gt;</text></svg>';
-        } else if (ext === 'css') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">CSS</text></svg>';
-        } else if (ext === 'json') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="7" font-weight="bold" font-family="monospace">{ }</text></svg>';
-        } else if (ext === 'sql') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">SQL</text></svg>';
-        } else if (ext === 'java') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="7" font-weight="bold" font-family="monospace">JAVA</text></svg>';
-        } else if (ext === 'cpp') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="monospace">C++</text></svg>';
-        } else if (ext === 'c') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="monospace">C</text></svg>';
-        } else if (ext === 'csharp') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">C#</text></svg>';
-        } else if (ext === 'ruby') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">RB</text></svg>';
-        } else if (ext === 'go') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="monospace">GO</text></svg>';
-        } else if (ext === 'rust') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">RS</text></svg>';
-        } else if (ext === 'kotlin') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="7" font-weight="bold" font-family="monospace">KT</text></svg>';
-        } else if (ext === 'swift') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="7" font-weight="bold" font-family="monospace">SW</text></svg>';
-        } else if (ext === 'dart') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="monospace">DR</text></svg>';
-        } else if (ext === 'bash') {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="monospace">$</text></svg>';
-        } else {
-            return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' + rect + '<text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">&lt;/&gt;</text></svg>';
-        }
+        const badgeMap = {
+            python: { label: 'PY', size: '10' },
+            javascript: { label: 'JS', size: '10' },
+            typescript: { label: 'TS', size: '9' },
+            php: { label: 'PHP', size: '9' },
+            html: { label: '&lt;/&gt;', size: '8' },
+            css: { label: 'CSS', size: '9' },
+            json: { label: '{ }', size: '7' },
+            sql: { label: 'SQL', size: '9' },
+            java: { label: 'JAVA', size: '7' },
+            cpp: { label: 'C++', size: '8' },
+            c: { label: 'C', size: '11' },
+            csharp: { label: 'C#', size: '9' },
+            ruby: { label: 'RB', size: '9' },
+            go: { label: 'GO', size: '10' },
+            rust: { label: 'RS', size: '9' },
+            kotlin: { label: 'KT', size: '7' },
+            swift: { label: 'SW', size: '7' },
+            dart: { label: 'DR', size: '8' },
+            bash: { label: '$', size: '11' }
+        };
+        const item = badgeMap[ext] || { label: '&lt;/&gt;', size: '9' };
+        return '<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+               '<rect width="24" height="24" rx="5" fill="' + color + '"/>' +
+               '<text x="12" y="17" text-anchor="middle" fill="white" font-size="' + item.size + '" font-weight="bold" font-family="monospace">' + item.label + '</text>' +
+               '</svg>';
     }
     
     document.getElementById('logoContainer').style.backgroundColor = langColor + '15';
@@ -635,43 +626,57 @@ app.get('/codes/:filename', (req, res) => {
     document.getElementById('langBullet').style.boxShadow = '0 0 0 1px rgba(0,0,0,0.1)';
     document.getElementById('langNameSpan').style.color = langColor;
     
-    hljs.highlightAll();
-    
-    function copyCode() {
-        const code = document.getElementById('codeContent').innerText;
-        navigator.clipboard.writeText(code).then(() => {
-            const btns = document.querySelectorAll('.btn-primary');
-            let copyBtn = null;
-            btns.forEach(btn => {
-                if (btn.innerText.includes('Copy Code') || btn.innerText.includes('COPY')) {
-                    copyBtn = btn;
-                }
-            });
-            if (copyBtn) {
-                const originalHtml = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<span class="material-icons text-sm">check</span> Copied!';
-                setTimeout(() => copyBtn.innerHTML = originalHtml, 2000);
-            }
-        });
+    if (window.hljs) {
+        hljs.highlightAll();
     }
     
-    function downloadCode() {
-        const code = document.getElementById('codeContent').innerText;
-        const blob = new Blob([code], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = '${filename}';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+    // Fungsi Copy Code (dengan fallback untuk HTTP non-HTTPS)
+    document.getElementById('btnCopy').addEventListener('click', function() {
+        const codeElement = document.getElementById('codeContent');
+        const code = codeElement ? codeElement.textContent : '';
+        const copyBtn = this;
+        const originalHtml = copyBtn.innerHTML;
+
+        const showSuccess = () => {
+            copyBtn.innerHTML = '<span class="material-icons text-sm">check</span> <span>Copied!</span>';
+            setTimeout(() => { copyBtn.innerHTML = originalHtml; }, 2000);
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(code).then(showSuccess).catch(() => fallbackCopy(code, showSuccess));
+        } else {
+            fallbackCopy(code, showSuccess);
+        }
+    });
+
+    function fallbackCopy(text, callback) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            callback();
+        } catch (err) {
+            console.error('Copy failed', err);
+        }
+        document.body.removeChild(textArea);
     }
     
-    function viewRaw() {
-        window.open('/raw/${filename}', '_blank');
-    }
+    // Fungsi Download Code
+    document.getElementById('btnDownload').addEventListener('click', function() {
+        window.location.href = '/raw/download/' + encodeURIComponent(currentFilename);
+    });
     
+    // Fungsi View Raw
+    document.getElementById('btnRaw').addEventListener('click', function() {
+        window.open('/raw/' + encodeURIComponent(currentFilename), '_blank');
+    });
+    
+    // Fungsi Theme
     function initTheme() {
         const isDark = localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
         const html = document.documentElement;
@@ -698,29 +703,8 @@ app.get('/codes/:filename', (req, res) => {
     
     function toggleTheme() {
         const isDark = document.documentElement.classList.contains('dark');
-        const newIsDark = !isDark;
-        const html = document.documentElement;
-        const body = document.body;
-        
-        if (newIsDark) {
-            html.classList.add('dark');
-            body.classList.add('dark-body', 'dark-mode');
-            body.classList.remove('light-body', 'light-mode');
-            document.getElementById('theme-toggle-dark-icon')?.classList.remove('hidden');
-            document.getElementById('theme-toggle-light-icon')?.classList.add('hidden');
-            body.classList.add('dark-scrollbar');
-            body.classList.remove('light-scrollbar');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            html.classList.remove('dark');
-            body.classList.add('light-body', 'light-mode');
-            body.classList.remove('dark-body', 'dark-mode');
-            document.getElementById('theme-toggle-dark-icon')?.classList.add('hidden');
-            document.getElementById('theme-toggle-light-icon')?.classList.remove('hidden');
-            body.classList.add('light-scrollbar');
-            body.classList.remove('dark-scrollbar');
-            localStorage.setItem('theme', 'light');
-        }
+        localStorage.setItem('theme', !isDark ? 'dark' : 'light');
+        initTheme();
     }
     
     document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);

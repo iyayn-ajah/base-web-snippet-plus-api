@@ -1,8 +1,3 @@
-/*
-INI WM
-CODE FROM: https://codevault.iyayn.web.id/
-*/
-
 async function soundcloudsearch(query) {
     try {
         const encodedQuery = encodeURIComponent(query);

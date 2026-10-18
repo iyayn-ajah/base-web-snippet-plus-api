@@ -11,8 +11,8 @@
 ---------
 
 ### 📃 NOTE
-There may be a module missing for the scraper. If yes, add it to package.json and index.js.
-And for add code to snippet, just add ur code to folder `codes/`
+- There may be a module missing for the scraper. If yes, add it to package.json and index.js.
+- And for add code to snippet, just add ur code to folder `codes/`
 ---------
 ---
 # Structure Map

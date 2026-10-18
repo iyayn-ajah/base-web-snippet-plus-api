@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Code Vault by Shikaku Iyayn ajah</title>
+  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg?format=png&name=900x900">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          animation: {
+            'float': 'float 3s ease-in-out infinite',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'fadeIn': 'fadeIn 0.5s ease-out',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            fadeIn: {
+              'from': { opacity: '0', transform: 'translateY(10px)' },
+              'to': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    }
+    
+    .dark-scrollbar::-webkit-scrollbar { width: 8px; }
+    .dark-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; }
+    .dark-scrollbar::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+    .dark-scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }
+    .light-scrollbar::-webkit-scrollbar { width: 8px; }
+    .light-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+    .light-scrollbar::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+    .light-scrollbar::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+
+    .dark-body { background-color: #000000 !important; }
+    .light-body { background-color: #f9fafb !important; }
+
+    .social-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 12px; padding: 8px 20px; font-weight: 600;
+      text-decoration: none; transition: all 0.3s ease; border: 1px solid;
+    }
+    .light-mode .social-btn { background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .light-mode .social-btn:hover { background-color: #f1f5f9; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+    .dark-mode .social-btn { background-color: #1e293b; border-color: #334155; color: #cbd5e1; }
+    .dark-mode .social-btn:hover { background-color: #334155; transform: translateY(-2px); }
+
+    .btn-primary {
+      background: #000; color: white; border: 2px solid #000; border-radius: 40px;
+      font-weight: 800; transition: all 0.25s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+    .dark-mode .btn-primary { background: #2d3748; border-color: #4a5568; color: #f1f5f9; }
+    .btn-primary:hover { transform: scale(1.02) translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2); }
+
+    .card-glow { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .dark-card:hover { box-shadow: 0 20px 30px rgba(255, 255, 255, 0.05); }
+    .light-card:hover { box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1); }
+
+    .code-preview { font-family: 'JetBrains Mono', monospace; }
+    .code-preview pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+    .code-preview code { font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    @media (max-width: 640px) {
+      .btn-primary { padding-left: 1.25rem; padding-right: 1.25rem; font-size: 0.9rem; }
+    }
+
+    .hljs {
+      background: transparent !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 light-body dark-body transition-colors dark-scrollbar">
+
+<div class="fixed top-4 right-4 z-50">
+  <button id="theme-toggle" type="button" 
+    class="p-3 rounded-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white 
+           hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300 
+           focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500
+           shadow-lg border border-gray-200 dark:border-gray-700">
+    <svg id="theme-toggle-dark-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+    </svg>
+    <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+    </svg>
+  </button>
+</div>
+
+<main class="container mx-auto px-4 py-8 pt-20">
+  <div class="max-w-6xl mx-auto">
+    <a href="/" class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline mb-4 transition">
+        <span class="material-icons text-sm">arrow_back</span>
+        <span>Back to home</span>
+    </a>
+    <div class="mb-5 flex justify-center">
+        <img id="logoImg" 
+             src="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg" 
+             alt="Logo" 
+             class="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-2xl shadow-md border-2 border-gray-100 dark:border-gray-700 hover:scale-105 transition-all duration-300">
+    </div>
+    <div class="text-center mb-10">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-3">CODES VAULT BY SHIKAKU IYAYN AJAH</h1>
+      <p class="text-gray-600 dark:text-gray-300">Free codes for developers</p>
+    </div>
+
+    <div class="mb-8">
+      <div class="relative max-w-md mx-auto">
+        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+        <input type="text" id="searchInput" class="w-full py-3 pl-10 pr-12 rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-black dark:focus:border-gray-400 transition" placeholder="Search code...">
+        <button id="clearSearchBtn" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hidden"><span class="material-icons">close</span></button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="cardsContainer">
+      <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 animate-pulse"><div class="h-12 w-12 bg-gray-300 dark:bg-gray-600 rounded-lg mb-3"></div><div class="h-5 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-2"></div><div class="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full"></div></div>
+      <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 animate-pulse"><div class="h-12 w-12 bg-gray-300 dark:bg-gray-600 rounded-lg mb-3"></div><div class="h-5 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-2"></div><div class="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full"></div></div>
+      <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 animate-pulse"><div class="h-12 w-12 bg-gray-300 dark:bg-gray-600 rounded-lg mb-3"></div><div class="h-5 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-2"></div><div class="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full"></div></div>
+    </div>
+
+    <div class="text-center mt-8">
+      <div class="code-count inline-block px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-sm font-semibold" id="codeCount">0 Codes</div>
+    </div>
+  </div>
+</main>
+
+<section id="social" class="container mx-auto px-4 py-8 border-t border-gray-200 dark:border-gray-800 mt-8">
+  <div class="flex flex-wrap justify-center gap-3">
+    <a href="https://t.me/AfiqAjah" target="_blank" class="social-btn px-5 py-2.5">Telegram</a>
+    <a href="https://whatsapp.com/channel/0029VaoJb11LikgEpNpBty0e" target="_blank" class="social-btn px-5 py-2.5">WhatsApp</a>
+    <a href="https://www.instagram.com/iyayn_ajah" target="_blank" class="social-btn px-5 py-2.5">Instagram</a>
+    <a href="https://github.com/iyayn-ajah" target="_blank" class="social-btn px-5 py-2.5">GitHub</a>
+    <a href="https://www.youtube.com/@shikaku-doang" target="_blank" class="social-btn px-5 py-2.5">YouTube</a>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/php.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/html.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+<script>
+  let listcodeData = [];
+  let currentCode = "", currentFile = "", currentFileName = "", currentLanguage = "";
+
+  const cardsContainer = document.getElementById('cardsContainer');
+  const searchInput = document.getElementById('searchInput');
+  const clearBtn = document.getElementById('clearSearchBtn');
+  const codeCountSpan = document.getElementById('codeCount');
+
+  let highlightStyleLoaded = false;
+
+  function getLanguageMetadata(extension) {
+    const ext = extension ? extension.replace('.', '').toLowerCase() : '';
+    const map = {
+      'js':     { name: 'JavaScript',  color: '#F7DF1E', bgClass: 'bg-[#F7DF1E]', textClass: 'text-[#F7DF1E]' },
+      'ts':     { name: 'TypeScript',  color: '#3178C6', bgClass: 'bg-[#3178C6]', textClass: 'text-[#3178C6]' },
+      'py':     { name: 'Python',      color: '#3776AB', bgClass: 'bg-[#3776AB]', textClass: 'text-[#3776AB]' },
+      'php':    { name: 'PHP',         color: '#777BB4', bgClass: 'bg-[#777BB4]', textClass: 'text-[#777BB4]' },
+      'java':   { name: 'Java',        color: '#007396', bgClass: 'bg-[#007396]', textClass: 'text-[#007396]' },
+      'cpp':    { name: 'C++',         color: '#00599C', bgClass: 'bg-[#00599C]', textClass: 'text-[#00599C]' },
+      'c':      { name: 'C',           color: '#A8B9CC', bgClass: 'bg-[#A8B9CC]', textClass: 'text-[#A8B9CC]' },
+      'cs':     { name: 'C#',          color: '#239120', bgClass: 'bg-[#239120]', textClass: 'text-[#239120]' },
+      'rb':     { name: 'Ruby',        color: '#CC342D', bgClass: 'bg-[#CC342D]', textClass: 'text-[#CC342D]' },
+      'go':     { name: 'Go',          color: '#00ADD8', bgClass: 'bg-[#00ADD8]', textClass: 'text-[#00ADD8]' },
+      'rs':     { name: 'Rust',        color: '#DEA584', bgClass: 'bg-[#DEA584]', textClass: 'text-[#DEA584]' },
+      'html':   { name: 'HTML',        color: '#E34F26', bgClass: 'bg-[#E34F26]', textClass: 'text-[#E34F26]' },
+      'css':    { name: 'CSS',         color: '#1572B6', bgClass: 'bg-[#1572B6]', textClass: 'text-[#1572B6]' },
+      'json':   { name: 'JSON',        color: '#000000', bgClass: 'bg-gray-800', textClass: 'text-gray-800 dark:text-gray-300' },
+      'sql':    { name: 'SQL',         color: '#CC2927', bgClass: 'bg-[#CC2927]', textClass: 'text-[#CC2927]' },
+      'sh':     { name: 'Bash',        color: '#4EAA25', bgClass: 'bg-[#4EAA25]', textClass: 'text-[#4EAA25]' },
+      'kt':     { name: 'Kotlin',      color: '#7F52FF', bgClass: 'bg-[#7F52FF]', textClass: 'text-[#7F52FF]' },
+      'swift':  { name: 'Swift',       color: '#F05138', bgClass: 'bg-[#F05138]', textClass: 'text-[#F05138]' },
+      'dart':   { name: 'Dart',        color: '#00B4AB', bgClass: 'bg-[#00B4AB]', textClass: 'text-[#00B4AB]' },
+      'lua':    { name: 'Lua',         color: '#000080', bgClass: 'bg-[#000080]', textClass: 'text-[#000080]' },
+      'r':      { name: 'R',           color: '#276DC3', bgClass: 'bg-[#276DC3]', textClass: 'text-[#276DC3]' },
+      'md':     { name: 'Markdown',    color: '#083FA1', bgClass: 'bg-[#083FA1]', textClass: 'text-[#083FA1]' }
+    };
+    return map[ext] || { name: 'CODE', color: '#6B7280', bgClass: 'bg-gray-500', textClass: 'text-gray-500' };
+  }
+
+  function getLanguageFromExtension(filename) {
+    const ext = filename.split('.').pop().toLowerCase();
+    const langMap = {
+      'js': 'javascript', 'ts': 'typescript', 'py': 'python', 'php': 'php',
+      'java': 'java', 'cpp': 'cpp', 'c': 'c', 'cs': 'csharp', 'rb': 'ruby',
+      'go': 'go', 'rs': 'rust', 'html': 'html', 'css': 'css', 'json': 'json',
+      'xml': 'xml', 'sql': 'sql', 'sh': 'bash', 'kt': 'kotlin', 'swift': 'swift',
+      'dart': 'dart', 'lua': 'lua', 'r': 'r', 'md': 'markdown', 'txt': 'plaintext'
+    };
+    return langMap[ext] || 'plaintext';
+  }
+
+  function loadHighlightStyle(isDark) {
+    const styleId = 'hljs-dynamic-style';
+    let existing = document.getElementById(styleId);
+    if (existing) existing.remove();
+    
+    const link = document.createElement('link');
+    link.id = styleId;
+    link.rel = 'stylesheet';
+    if (isDark) {
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css';
+    } else {
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css';
+    }
+    document.head.appendChild(link);
+    highlightStyleLoaded = true;
+  }
+
+  function forceHighlightCode() {
+    const codeElement = document.getElementById('highlightCode');
+    if (codeElement && codeElement.textContent && codeElement.textContent.trim() !== '') {
+      codeElement.removeAttribute('data-highlighted');
+      codeElement.className = `language-${currentLanguage}`;
+      hljs.highlightElement(codeElement);
+    }
+  }
+
+  async function fetchData() {
+    try {
+      const res = await fetch('/api/listcode');
+      if (!res.ok) throw new Error();
+      listcodeData = await res.json();
+      listcodeData.sort((a,b) => a.name.localeCompare(b.name));
+      renderCards();
+      checkUrlAndRedirect();
+    } catch(e) {
+      console.error('Failed to fetch API');
+      listcodeData = [];
+      renderCards();
+    }
+  }
+
+  function getLogoComponent(langColor, cleanExt) {
+    if (cleanExt === 'py') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="monospace">PY</text></svg>`;
+    } else if (cleanExt === 'js') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="monospace">JS</text></svg>`;
+    } else if (cleanExt === 'ts') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">TS</text></svg>`;
+    } else if (cleanExt === 'php') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">PHP</text></svg>`;
+    } else if (cleanExt === 'html') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">&lt;/&gt;</text></svg>`;
+    } else if (cleanExt === 'css') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">CSS</text></svg>`;
+    } else if (cleanExt === 'json') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="monospace">{ }</text></svg>`;
+    } else if (cleanExt === 'sql') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">SQL</text></svg>`;
+    } else if (cleanExt === 'java') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="monospace">JAVA</text></svg>`;
+    } else if (cleanExt === 'cpp') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">C++</text></svg>`;
+    } else if (cleanExt === 'go') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="monospace">GO</text></svg>`;
+    } else if (cleanExt === 'rs') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">RS</text></svg>`;
+    } else if (cleanExt === 'rb') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">RB</text></svg>`;
+    } else if (cleanExt === 'kt') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="monospace">KT</text></svg>`;
+    } else if (cleanExt === 'swift') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="monospace">SW</text></svg>`;
+    } else if (cleanExt === 'dart') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">DR</text></svg>`;
+    } else if (cleanExt === 'sh') {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="monospace">$</text></svg>`;
+    } else {
+      return `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="${langColor}"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="monospace">&lt;/&gt;</text></svg>`;
+    }
+  }
+
+  function renderCards() {
+    const query = searchInput.value.trim().toLowerCase();
+    let filtered = listcodeData.filter(s => s.name.toLowerCase().includes(query));
+    codeCountSpan.innerText = `${filtered.length} Codes`;
+    
+    if (filtered.length === 0) {
+      cardsContainer.innerHTML = `<div class="col-span-full text-center py-16"><span class="material-icons text-5xl opacity-40">search_off</span><h3 class="text-xl font-bold mt-2">No results found</h3></div>`;
+      return;
+    }
+    
+    cardsContainer.innerHTML = filtered.map(s => {
+      let badgeHtml = '';
+      if (s.badge === 'no_fee') {
+        badgeHtml = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white">NO FEE</span>`;
+      }
+      
+      const extensionRaw = s.extension || '.' + s.name.split('.').pop();
+      const cleanExt = extensionRaw.replace('.', '');
+      const langMeta = getLanguageMetadata(cleanExt);
+      const languageDisplayName = langMeta.name;
+      const iconicColorClass = langMeta.bgClass;
+      const iconicTextColor = langMeta.textClass;
+      const langColor = langMeta.color;
+      
+      const logoSvg = getLogoComponent(langColor, cleanExt);
+      
+      return `
+      <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 cursor-pointer transition-all hover:-translate-y-1 hover:shadow-xl card-glow light-card dark-card" onclick="redirectToCode('${s._id}')">
+        <div class="flex justify-between items-start mb-3">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background-color: ${langColor}15; border: 1px solid ${langColor}30;">
+            ${logoSvg}
+          </div>
+          <div class="flex flex-col gap-1 items-end">
+            ${badgeHtml}
+            <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">${cleanExt || s.name.split('.').pop()}</span>
+          </div>
+        </div>
+        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1 truncate">${escapeHtml(s.name)}</h3>
+        <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2">
+          <div class="w-2.5 h-2.5 rounded-full ${iconicColorClass}" style="background-color: ${langColor}; box-shadow: 0 0 0 1px rgba(0,0,0,0.1);"></div>
+          <span class="text-[11px] font-bold uppercase tracking-wide ${iconicTextColor}" style="color: ${langColor};">${languageDisplayName}</span>
+        </div>
+      </div>
+    `}).join('');
+  }
+
+  function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
+
+  function handleSearch() {
+    const val = searchInput.value;
+    if (clearBtn) clearBtn.classList.toggle('hidden', val.length === 0);
+    renderCards();
+  }
+  function clearSearch() { searchInput.value = ''; handleSearch(); }
+
+  searchInput.addEventListener('input', handleSearch);
+  clearBtn?.addEventListener('click', clearSearch);
+
+  window.redirectToCode = function(filename) {
+    window.location.href = `/codes/${filename}`;
+  };
+
+  function checkUrlAndRedirect() {
+    const pathname = window.location.pathname;
+    const match = pathname.match(/^\/codes\/(.+)$/);
+    
+    if (match && match[1] && listcodeData.length) {
+      const filename = match[1];
+      const found = listcodeData.find(s => s._id === filename);
+      if (found) {
+        window.location.href = `/codes/${filename}`;
+      }
+    }
+  }
+
+  function initTheme() {
+    const isDark = localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const html = document.documentElement;
+    const body = document.body;
+    if (isDark) {
+      html.classList.add('dark');
+      body.classList.add('dark-body', 'dark-mode');
+      body.classList.remove('light-body', 'light-mode');
+      document.getElementById('theme-toggle-dark-icon')?.classList.remove('hidden');
+      document.getElementById('theme-toggle-light-icon')?.classList.add('hidden');
+      body.classList.add('dark-scrollbar');
+      body.classList.remove('light-scrollbar');
+      loadHighlightStyle(true);
+    } else {
+      html.classList.remove('dark');
+      body.classList.add('light-body', 'light-mode');
+      body.classList.remove('dark-body', 'dark-mode');
+      document.getElementById('theme-toggle-dark-icon')?.classList.add('hidden');
+      document.getElementById('theme-toggle-light-icon')?.classList.remove('hidden');
+      body.classList.add('light-scrollbar');
+      body.classList.remove('dark-scrollbar');
+      loadHighlightStyle(false);
+    }
+  }
+
+  function toggleTheme() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const newIsDark = !isDark;
+    const html = document.documentElement;
+    const body = document.body;
+    if (newIsDark) {
+      html.classList.add('dark');
+      body.classList.add('dark-body', 'dark-mode');
+      body.classList.remove('light-body', 'light-mode');
+      document.getElementById('theme-toggle-dark-icon')?.classList.remove('hidden');
+      document.getElementById('theme-toggle-light-icon')?.classList.add('hidden');
+      body.classList.add('dark-scrollbar');
+      body.classList.remove('light-scrollbar');
+      loadHighlightStyle(true);
+      localStorage.setItem('theme', 'dark');
+    } else {
+      html.classList.remove('dark');
+      body.classList.add('light-body', 'light-mode');
+      body.classList.remove('dark-body', 'dark-mode');
+      document.getElementById('theme-toggle-dark-icon')?.classList.add('hidden');
+      document.getElementById('theme-toggle-light-icon')?.classList.remove('hidden');
+      body.classList.add('light-scrollbar');
+      body.classList.remove('dark-scrollbar');
+      loadHighlightStyle(false);
+      localStorage.setItem('theme', 'light');
+    }
+    forceHighlightCode();
+  }
+
+  document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+  initTheme();
+  fetchData();
+</script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>404 - Code Vault</title>
+  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg?format=png&name=900x900">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          animation: {
+            'float': 'float 3s ease-in-out infinite',
+            'fadeIn': 'fadeIn 0.5s ease-out',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            fadeIn: {
+              'from': { opacity: '0', transform: 'translateY(10px)' },
+              'to': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .dark-scrollbar::-webkit-scrollbar { width: 8px; }
+    .dark-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; }
+    .dark-scrollbar::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+    .light-scrollbar::-webkit-scrollbar { width: 8px; }
+    .light-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+    .light-scrollbar::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+
+    .dark-body { background-color: #000000 !important; }
+    .light-body { background-color: #f9fafb !important; }
+    
+    .btn-primary {
+      background: #000; color: white; border: 2px solid #000; border-radius: 40px;
+      font-weight: 800; transition: all 0.25s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 0.75rem 1.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .dark-mode .btn-primary { background: #2d3748; border-color: #4a5568; color: #f1f5f9; }
+    .btn-primary:hover { transform: scale(1.02) translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2); }
+    
+    .btn-outline {
+      background: transparent; border: 2px solid currentColor; border-radius: 40px;
+      font-weight: 700; padding: 0.75rem 1.5rem;
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      transition: all 0.25s;
+    }
+    .btn-outline:hover { transform: translateY(-2px); background: rgba(0,0,0,0.05); }
+    .dark-mode .btn-outline:hover { background: rgba(255,255,255,0.1); }
+    
+    @media (max-width: 640px) {
+      .btn-primary, .btn-outline { padding-left: 1.25rem; padding-right: 1.25rem; font-size: 0.9rem; }
+    }
+    
+    .social-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 12px; padding: 8px 20px; font-weight: 600;
+      text-decoration: none; transition: all 0.3s ease; border: 1px solid;
+    }
+    .light-mode .social-btn { background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b; }
+    .light-mode .social-btn:hover { background-color: #f1f5f9; transform: translateY(-2px); }
+    .dark-mode .social-btn { background-color: #1e293b; border-color: #334155; color: #cbd5e1; }
+    .dark-mode .social-btn:hover { background-color: #334155; transform: translateY(-2px); }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 light-body dark-body transition-colors">
+  <div class="fixed top-4 right-4 z-50">
+    <button id="theme-toggle" type="button" 
+      class="p-3 rounded-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white 
+             hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300 
+             shadow-lg border border-gray-200 dark:border-gray-700">
+      <svg id="theme-toggle-dark-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+      </svg>
+      <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path>
+      </svg>
+    </button>
+  </div>
+  
+  <div class="flex flex-col items-center justify-center min-h-screen p-4">
+    <div id="main-card" class="w-full max-w-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-8 text-center fade-in">
+      
+      <!-- 404 Number -->
+      <div class="mb-4 animate-float">
+        <h1 class="text-8xl font-black tracking-tighter text-gray-900 dark:text-white">404</h1>
+      </div>
+      
+      <!-- Title -->
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
+        Code Vault
+      </h2>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">by Shikaku Iyayn ajah</p>
+      
+      <!-- Message -->
+      <div class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-2 rounded-lg text-sm font-medium mb-6 inline-block">
+        ⚠️ Page Not Found
+      </div>
+      
+      <!-- Buttons -->
+      <div class="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+        <a href="/codes" id="jelajahiButton" class="btn-primary">
+          <span class="material-icons text-base">code</span> 
+          <span>Explore Codes</span>
+        </a>
+        <a href="/" class="btn-outline">
+          <span class="material-icons text-base">home</span> 
+          <span>Home</span>
+        </a>
+      </div>
+      
+      <!-- Social Media -->
+      <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div class="flex flex-wrap justify-center gap-2">
+          <a href="https://t.me/AfiqAjah" target="_blank" class="social-btn px-4 py-2 text-sm">Telegram</a>
+          <a href="https://whatsapp.com/channel/0029VaoJb11LikgEpNpBty0e" target="_blank" class="social-btn px-4 py-2 text-sm">WhatsApp</a>
+          <a href="https://www.instagram.com/iyayn_ajah" target="_blank" class="social-btn px-4 py-2 text-sm">Instagram</a>
+          <a href="https://github.com/iyayn-ajah" target="_blank" class="social-btn px-4 py-2 text-sm">GitHub</a>
+          <a href="https://www.youtube.com/@shikaku-doang" target="_blank" class="social-btn px-4 py-2 text-sm">YouTube</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const htmlElement = document.documentElement;
+    const bodyElement = document.body;
+
+    function setTheme(isDark) {
+      if (isDark) {
+        htmlElement.classList.add('dark');
+        bodyElement.classList.add('dark-body', 'dark-mode');
+        bodyElement.classList.remove('light-body', 'light-mode');
+        localStorage.setItem('theme', 'dark');
+        themeToggleDarkIcon.classList.remove('hidden');
+        themeToggleLightIcon.classList.add('hidden');
+      } else {
+        htmlElement.classList.remove('dark');
+        bodyElement.classList.add('light-body', 'light-mode');
+        bodyElement.classList.remove('dark-body', 'dark-mode');
+        localStorage.setItem('theme', 'light');
+        themeToggleDarkIcon.classList.add('hidden');
+        themeToggleLightIcon.classList.remove('hidden');
+      }
+      updateScrollbarClass();
+    }
+    
+    function updateScrollbarClass() {
+      const isDark = htmlElement.classList.contains('dark');
+      if (isDark) {
+        bodyElement.classList.remove('light-scrollbar');
+        bodyElement.classList.add('dark-scrollbar');
+      } else {
+        bodyElement.classList.remove('dark-scrollbar');
+        bodyElement.classList.add('light-scrollbar');
+      }
+    }
+    
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark') setTheme(true);
+      else if (savedTheme === 'light') setTheme(false);
+      else setTheme(systemPrefersDark);
+    }
+    
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = htmlElement.classList.contains('dark');
+      setTheme(!isDark);
+    });
+    
+    initTheme();
+  </script>
+</body>
+</html>

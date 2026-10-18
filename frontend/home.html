@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Code Vault by Shikaku Iyayn ajah</title>
+  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg?format=png&name=900x900">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          animation: {
+            'float': 'float 3s ease-in-out infinite',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'fadeIn': 'fadeIn 0.5s ease-out',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            fadeIn: {
+              'from': { opacity: '0', transform: 'translateY(10px)' },
+              'to': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    }
+    
+    .dark-scrollbar::-webkit-scrollbar { width: 8px; }
+    .dark-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; }
+    .dark-scrollbar::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+    .dark-scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }
+    .light-scrollbar::-webkit-scrollbar { width: 8px; }
+    .light-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+    .light-scrollbar::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+    .light-scrollbar::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+
+    .dark-body { background-color: #000000 !important; }
+    .light-body { background-color: #f9fafb !important; }
+    
+    .brutal-card {
+      box-shadow: 8px 8px 0px 0px rgba(0,0,0,0.2);
+      transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .dark-mode .brutal-card {
+      box-shadow: 8px 8px 0px 0px rgba(255,255,255,0.15);
+    }
+    .brutal-card:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 12px 12px 0px 0px rgba(0,0,0,0.3);
+    }
+    .dark-mode .brutal-card:hover {
+      box-shadow: 12px 12px 0px 0px rgba(255,255,255,0.25);
+    }
+    
+    .drawer-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px); z-index: 900;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: all; }
+    .drawer {
+      position: fixed; top: 0; left: -100%;
+      width: min(300px, 85vw); height: 100vh;
+      background: var(--drawer-bg, #fff); border-right: 4px solid var(--border-color, #000);
+      z-index: 950; transition: left 0.4s cubic-bezier(0.85, 0, 0.15, 1);
+      display: flex; flex-direction: column;
+    }
+    .drawer.open { left: 0; }
+    .dark-mode .drawer { --drawer-bg: #1e293b; --border-color: #475569; background: #1e293b; border-right-color: #475569; }
+    .light-mode .drawer { --drawer-bg: #ffffff; --border-color: #000000; background: #ffffff; border-right-color: #000000; }
+    .drawer-header { padding: 22px; border-bottom: 3px solid var(--border-color); background: var(--accent-bg, #000); display: flex; align-items: center; justify-content: space-between; }
+    .dark-mode .drawer-header { --accent-bg: #0f172a; background: #0f172a; }
+    .drawer-logo { font-weight: 900; font-size: 18px; letter-spacing: -1px; text-transform: uppercase; color: #fff; }
+    .drawer-close { width: 36px; height: 36px; background: none; border: 2px solid rgba(255,255,255,0.4); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: 0.2s; }
+    .drawer-close:hover { background: #fff; color: #000; }
+    .drawer-nav { padding: 24px 18px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+    .drawer-nav-label { font-size: 9px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; opacity: 0.5; margin-bottom: 4px; }
+    .drawer-link {
+      display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+      background: rgba(0,0,0,0.05); border: 2px solid var(--border-color);
+      border-radius: 12px; color: var(--text-color); text-decoration: none;
+      font-weight: 700; font-size: 14px; transition: 0.2s;
+    }
+    .dark-mode .drawer-link { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+    .drawer-link:hover { transform: translateX(4px); background: var(--accent-bg); color: white; border-color: var(--accent-bg); }
+    .dark-mode .drawer-link:hover { background: #334155; color: white; }
+    .drawer-footer { padding: 18px 22px; border-top: 2px solid var(--border-color); font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.5; }
+
+    .social-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 12px; padding: 8px 20px; font-weight: 600;
+      text-decoration: none; transition: all 0.3s ease; border: 1px solid;
+    }
+    .light-mode .social-btn { background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .light-mode .social-btn:hover { background-color: #f1f5f9; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+    .dark-mode .social-btn { background-color: #1e293b; border-color: #334155; color: #cbd5e1; }
+    .dark-mode .social-btn:hover { background-color: #334155; transform: translateY(-2px); }
+
+    .feature-modern {
+      border-radius: 20px; background: var(--surface-card); border: 1px solid var(--border-color);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .feature-modern:hover { transform: translateY(-6px); box-shadow: 0 20px 25px -12px rgba(0,0,0,0.2); }
+    .dark-mode .feature-modern { --surface-card: #1e293b; --border-color: #334155; background: #1e293b; border-color: #334155; }
+    .light-mode .feature-modern { --surface-card: #ffffff; --border-color: #e2e8f0; background: #ffffff; border-color: #e2e8f0; }
+
+    .btn-primary {
+      background: #000; color: white; border: 2px solid #000; border-radius: 40px;
+      font-weight: 800; transition: all 0.25s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+    .dark-mode .btn-primary { background: #2d3748; border-color: #4a5568; color: #f1f5f9; }
+    .btn-primary:hover { transform: scale(1.02) translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2); }
+    
+    @media (min-aspect-ratio: 16/9) {
+      .btn-primary {
+        padding-left: 2.5rem !important;
+        padding-right: 2.5rem !important;
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+        font-size: 1.25rem !important;
+        gap: 0.75rem !important;
+        transform: scale(1.02);
+      }
+      .btn-primary:hover {
+        transform: scale(1.07) translateY(-3px);
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .btn-primary {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+        font-size: 0.9rem;
+      }
+    }
+    
+    .btn-outline-secondary { background: transparent; border: 2px solid currentColor; border-radius: 40px; font-weight: 700; backdrop-filter: blur(2px); }
+    
+    .text-wrap-anywhere { overflow-wrap: anywhere; word-break: break-word; }
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+
+    .card-glow {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .dark-card:hover {
+      box-shadow: 0 20px 30px rgba(255, 255, 255, 0.05);
+    }
+    .light-card:hover {
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-16-9-mode {
+      padding-left: 2.5rem !important;
+      padding-right: 2.5rem !important;
+      padding-top: 1rem !important;
+      padding-bottom: 1rem !important;
+      font-size: 1.25rem !important;
+      gap: 0.75rem !important;
+      transform: scale(1.02);
+    }
+    
+    .btn-16-9-mode:hover {
+      transform: scale(1.07) translateY(-3px) !important;
+    }
+
+    .social-skeleton {
+      display: inline-block;
+      height: 42px;
+      width: 110px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    .dark-mode .social-skeleton {
+      background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+      background-size: 200% 100%;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 light-body dark-body transition-colors">
+  <div class="fixed top-4 right-4 z-50">
+    <button id="theme-toggle" type="button" 
+      class="p-3 rounded-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white 
+             hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300 
+             focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500
+             shadow-lg border border-gray-200 dark:border-gray-700">
+      <svg id="theme-toggle-dark-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+      </svg>
+      <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div class="flex flex-col items-center justify-center min-h-screen p-4">
+    <div id="main-card"
+         class="w-full max-w-xl bg-white dark:bg-gray-800 
+                border border-gray-200 dark:border-gray-700 
+                rounded-2xl shadow-xl p-6 sm:p-8 card-glow light-card dark-card">
+      
+      <div class="mb-5 flex justify-center">
+        <img id="logoImg" 
+             src="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg" 
+             alt="Logo" 
+             class="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-2xl shadow-md border-2 border-gray-100 dark:border-gray-700 hover:scale-105 transition-all duration-300">
+      </div>
+
+      <div class="text-center mb-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-2 text-wrap-anywhere px-2">
+          CodesVault & API by Shikaku Iyayn ajah
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 text-sm">Free codes & API for developers</p>
+      </div>
+
+      <!-- Bagian Tombol Dirapikan agar Lebih Sejajar/Rapi -->
+      <div class="flex flex-col sm:flex-row gap-4 mb-8 justify-center items-center">
+        <a href="/apidocs" class="jelajahi-btn btn-primary w-full sm:w-auto transition-all duration-300">
+          <span class="material-icons text-base md:text-lg">api</span> 
+          <span>Explore API</span>
+        </a>
+        <a href="/codes" class="jelajahi-btn btn-primary w-full sm:w-auto transition-all duration-300">
+          <span class="material-icons text-base md:text-lg">code</span> 
+          <span>Explore Code</span>
+        </a>
+      </div>
+      
+      <section id="social" class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div id="social-buttons" class="flex flex-wrap justify-center gap-3">
+          <div class="social-skeleton"></div>
+          <div class="social-skeleton"></div>
+          <div class="social-skeleton"></div>
+          <div class="social-skeleton"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const LINKBIO_JSON_PATH = './linkbio.json';
+
+    async function loadSocialButtons() {
+      const container = document.getElementById('social-buttons');
+      
+      try {
+        const response = await fetch(LINKBIO_JSON_PATH, { cache: 'no-cache' });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        const links = data.link_bio;
+        
+        if (!Array.isArray(links) || links.length === 0) {
+          throw new Error('Data link_bio kosong atau tidak valid');
+        }
+        
+        container.innerHTML = '';
+        
+        links.forEach(link => {
+          const a = document.createElement('a');
+          a.href = link.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.textContent = link.name;
+          a.className = 'social-btn px-5 py-2.5 fade-in';
+          container.appendChild(a);
+        });
+        
+      } catch (error) {
+        console.error('Gagal memuat linkbio.json:', error);
+        container.innerHTML = `
+          <p class="text-sm text-red-500 dark:text-red-400 text-center w-full">
+            Gagal memuat tautan sosmed. Pastikan file <code class="font-mono">linkbio.json</code> tersedia.
+          </p>
+        `;
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadSocialButtons);
+    } else {
+      loadSocialButtons();
+    }
+
+    function openDrawer() {
+      const drawer = document.getElementById('drawer');
+      const overlay = document.getElementById('drawerOverlay');
+      if (drawer && overlay) {
+        drawer.classList.add('open');
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    function closeDrawer() {
+      const drawer = document.getElementById('drawer');
+      const overlay = document.getElementById('drawerOverlay');
+      if (drawer && overlay) {
+        drawer.classList.remove('open');
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+    
+    const jelajahiBtns = document.querySelectorAll('.jelajahi-btn');
+    
+    function updateButtonForAspectRatio() {
+      if (!jelajahiBtns.length) return;
+      const aspectRatio = window.innerWidth / window.innerHeight;
+      const isWideScreen = aspectRatio >= (16/9);
+      
+      jelajahiBtns.forEach(btn => {
+        if (isWideScreen) {
+          btn.classList.add('btn-16-9-mode');
+          btn.style.setProperty('--btn-scale', '1.02');
+        } else {
+          btn.classList.remove('btn-16-9-mode');
+          btn.style.removeProperty('--btn-scale');
+        }
+      });
+    }
+    
+    updateButtonForAspectRatio();
+    
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        updateButtonForAspectRatio();
+      }, 100);
+    });
+    
+    window.addEventListener('orientationchange', function() {
+      setTimeout(updateButtonForAspectRatio, 50);
+    });
+    
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const htmlElement = document.documentElement;
+    const bodyElement = document.body;
+    const mainCard = document.getElementById('main-card');
+
+    function setTheme(isDark) {
+      if (isDark) {
+        htmlElement.classList.add('dark');
+        bodyElement.classList.add('dark-body');
+        bodyElement.classList.remove('light-body');
+        bodyElement.classList.add('dark-mode');
+        bodyElement.classList.remove('light-mode');
+        localStorage.setItem('theme', 'dark');
+        themeToggleDarkIcon.classList.remove('hidden');
+        themeToggleLightIcon.classList.add('hidden');
+        if (mainCard) {
+          mainCard.classList.add('dark-card');
+          mainCard.classList.remove('light-card');
+        }
+      } else {
+        htmlElement.classList.remove('dark');
+        bodyElement.classList.remove('dark-body');
+        bodyElement.classList.add('light-body');
+        bodyElement.classList.add('light-mode');
+        bodyElement.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light');
+        themeToggleDarkIcon.classList.add('hidden');
+        themeToggleLightIcon.classList.remove('hidden');
+        if (mainCard) {
+          mainCard.classList.add('light-card');
+          mainCard.classList.remove('dark-card');
+        }
+      }
+      updateScrollbarClass();
+    }
+    
+    function updateScrollbarClass() {
+      const isDark = htmlElement.classList.contains('dark');
+      if (isDark) {
+        bodyElement.classList.remove('light-scrollbar');
+        bodyElement.classList.add('dark-scrollbar');
+      } else {
+        bodyElement.classList.remove('dark-scrollbar');
+        bodyElement.classList.add('light-scrollbar');
+      }
+    }
+    
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark') setTheme(true);
+      else if (savedTheme === 'light') setTheme(false);
+      else setTheme(systemPrefersDark);
+    }
+    
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = htmlElement.classList.contains('dark');
+      setTheme(!isDark);
+    });
+    
+    initTheme();
+    window.dispatchEvent(new Event('resize'));
+  </script>
+</body>
+</html>

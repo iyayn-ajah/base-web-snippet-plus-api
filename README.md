@@ -17,7 +17,7 @@
 ---
 # Structure Map
 ```
-snippet-plus-api/
+base-web-snippet-plus-api/
 ├── api/
 │   ├── ai/
 │   │   ├── gemini.js

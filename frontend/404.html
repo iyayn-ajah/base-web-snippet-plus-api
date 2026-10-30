@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>404</title>
-  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg?format=png&name=900x900">
+  <title id="pageTitle">404</title>
+  <link id="faviconLink" rel="icon" type="image/x-icon" href="">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -102,41 +102,31 @@
       
       <!-- 404 Number -->
       <div class="mb-4 animate-float">
-        <h1 class="text-8xl font-black tracking-tighter text-gray-900 dark:text-white">404</h1>
+        <h1 id="errorCode" class="text-8xl font-black tracking-tighter text-gray-900 dark:text-white"></h1>
       </div>
       
       <!-- Title -->
-      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-        Code Vault + API
-      </h2>
-      <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">by Shikaku Iyayn ajah</p>
+      <h2 id="headerTitle" class="text-xl font-bold text-gray-900 dark:text-white mb-2"></h2>
+      <p id="subtitle" class="text-gray-500 dark:text-gray-400 text-sm mb-6"></p>
       
       <!-- Message -->
-      <div class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-2 rounded-lg text-sm font-medium mb-6 inline-block">
-        ⚠️ Page Not Found
-      </div>
+      <div id="errorMessage" class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-2 rounded-lg text-sm font-medium mb-6 inline-block"></div>
       
       <!-- Buttons -->
       <div class="flex flex-col sm:flex-row gap-3 justify-center mb-8">
-        <a href="/codes" id="jelajahiButton" class="btn-primary">
-          <span class="material-icons text-base">code</span> 
-          <span>Explore Codes</span>
+        <a href="#" id="primaryBtn" class="btn-primary">
+          <span id="primaryBtnIcon" class="material-icons text-base"></span> 
+          <span id="primaryBtnText"></span>
         </a>
-        <a href="/" class="btn-outline">
-          <span class="material-icons text-base">home</span> 
-          <span>Home</span>
+        <a href="#" id="secondaryBtn" class="btn-outline">
+          <span id="secondaryBtnIcon" class="material-icons text-base"></span> 
+          <span id="secondaryBtnText"></span>
         </a>
       </div>
       
       <!-- Social Media -->
       <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
-        <div class="flex flex-wrap justify-center gap-2">
-          <a href="https://t.me/AfiqAjah" target="_blank" class="social-btn px-4 py-2 text-sm">Telegram</a>
-          <a href="https://whatsapp.com/channel/0029VaoJb11LikgEpNpBty0e" target="_blank" class="social-btn px-4 py-2 text-sm">WhatsApp</a>
-          <a href="https://www.instagram.com/iyayn_ajah" target="_blank" class="social-btn px-4 py-2 text-sm">Instagram</a>
-          <a href="https://github.com/iyayn-ajah" target="_blank" class="social-btn px-4 py-2 text-sm">GitHub</a>
-          <a href="https://www.youtube.com/@shikaku-doang" target="_blank" class="social-btn px-4 py-2 text-sm">YouTube</a>
-        </div>
+        <div id="socialContainer" class="flex flex-wrap justify-center gap-2"></div>
       </div>
     </div>
   </div>
@@ -147,6 +137,70 @@
     const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
     const htmlElement = document.documentElement;
     const bodyElement = document.body;
+
+    // Memuat konfigurasi teks & tombol dari 404.json
+    async function load404Config() {
+      try {
+        const response = await fetch('404.json', { cache: 'no-cache' });
+        if (!response.ok) throw new Error('Failed to load 404.json');
+        const config = await response.json();
+
+        if (config.title) document.title = config.title;
+        if (config.favicon) document.getElementById('faviconLink').href = config.favicon;
+        if (config.errorCode) document.getElementById('errorCode').textContent = config.errorCode;
+        if (config.headerTitle) document.getElementById('headerTitle').textContent = config.headerTitle;
+        if (config.subtitle) document.getElementById('subtitle').textContent = config.subtitle;
+        if (config.errorMessage) document.getElementById('errorMessage').textContent = config.errorMessage;
+
+        if (config.primaryButton) {
+          const pBtn = document.getElementById('primaryBtn');
+          pBtn.href = config.primaryButton.url || '#';
+          document.getElementById('primaryBtnIcon').textContent = config.primaryButton.icon || '';
+          document.getElementById('primaryBtnText').textContent = config.primaryButton.text || '';
+        }
+
+        if (config.secondaryButton) {
+          const sBtn = document.getElementById('secondaryBtn');
+          sBtn.href = config.secondaryButton.url || '#';
+          document.getElementById('secondaryBtnIcon').textContent = config.secondaryButton.icon || '';
+          document.getElementById('secondaryBtnText').textContent = config.secondaryButton.text || '';
+        }
+      } catch (error) {
+        console.error('Error loading 404.json:', error);
+      }
+    }
+
+    // Memuat daftar sosial media dari linkbio.json
+    async function loadLinkBio() {
+      const socialContainer = document.getElementById('socialContainer');
+      try {
+        const response = await fetch('linkbio.json', { cache: 'no-cache' });
+        if (!response.ok) throw new Error('Failed to load linkbio.json');
+        const socialData = await response.json();
+
+        if (!socialData.link_bio || !Array.isArray(socialData.link_bio)) {
+          throw new Error('Invalid linkbio.json format');
+        }
+
+        socialContainer.innerHTML = '';
+        socialData.link_bio.forEach(social => {
+          const a = document.createElement('a');
+          a.href = social.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.className = 'social-btn px-4 py-2 text-sm';
+          a.textContent = social.name;
+          socialContainer.appendChild(a);
+        });
+      } catch (error) {
+        console.error('Error loading linkbio.json:', error);
+        socialContainer.innerHTML = `
+          <p class="text-xs text-red-500 dark:text-red-400 text-center w-full">
+            Gagal memuat tautan sosmed (<code class="font-mono">linkbio.json</code>).
+          </p>
+        `;
+      }
+    }
 
     function setTheme(isDark) {
       if (isDark) {
@@ -192,6 +246,8 @@
     });
     
     initTheme();
+    load404Config();
+    loadLinkBio();
   </script>
 </body>
 </html>

@@ -89,6 +89,10 @@ app.get('/linkbio.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'linkbio.json'));
 });
 
+app.get('/404.json', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', '404.json'));
+});
+
 app.get('/apidocs', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'apidocs.html'));
 });

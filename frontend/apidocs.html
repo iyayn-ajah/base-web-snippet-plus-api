@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>EH PI AY DOANG</title>
-    <link id="faviconLink" rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg?format=png&name=900x900">
+    <title id="pageTitle">Loading...</title>
+    <link id="faviconLink" rel="icon" type="image/x-icon" href="">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -445,12 +445,12 @@
         <header id="api" class="mb-12">
             <div class="mb-5 flex justify-center">
                 <img id="logoImg" 
-                     src="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg" 
+                     src="" 
                      alt="Logo" 
                      class="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-2xl shadow-md border-2 border-gray-100 dark:border-gray-700 hover:scale-105 transition-all duration-300">
             </div>
-            <h1 id="mainTitle" class="text-4xl md:text-6xl font-black mb-4 leading-tight tracking-wider text-center gray-gradient-text">REST EH PI AY</h1>
-            <p id="mainDescription" class="text-lg font-light tracking-wide text-center stats-text-secondary">Kumpulan API Endpoint yang mungkin berguna.</p>
+            <h1 id="mainTitle" class="text-4xl md:text-6xl font-black mb-4 leading-tight tracking-wider text-center gray-gradient-text"></h1>
+            <p id="mainDescription" class="text-lg font-light tracking-wide text-center stats-text-secondary"></p>
             
             <div class="mt-8 flex flex-wrap justify-center items-center gap-4 md:gap-8">
                 <div class="stats-card flex items-center gap-3 px-5 py-3">
@@ -519,7 +519,6 @@
         </section>
 
         <footer id="siteFooter" class="mt-12 pt-6 border-t border-gray-300 dark:border-gray-700 text-center text-xs stats-text-secondary">
-            © SHIKAKU IYAYN AJAH
         </footer>
     </div>
 
@@ -538,6 +537,24 @@ const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
 const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
 const htmlElement = document.documentElement;
 const body = document.body;
+
+// Fungsi untuk memuat konfigurasi halaman dari apidocs.json
+async function loadSiteConfig() {
+    try {
+        const response = await fetch('apidocs.json', { cache: 'no-cache' });
+        if (!response.ok) throw new Error('Failed to load apidocs.json');
+        const config = await response.json();
+
+        if (config.title) document.title = config.title;
+        if (config.favicon) document.getElementById('faviconLink').href = config.favicon;
+        if (config.logo) document.getElementById('logoImg').src = config.logo;
+        if (config.headertitle) document.getElementById('mainTitle').textContent = config.headertitle;
+        if (config.headerdescription) document.getElementById('mainDescription').textContent = config.headerdescription;
+        if (config.footer) document.getElementById('siteFooter').textContent = config.footer;
+    } catch (error) {
+        console.error('Error loading apidocs.json:', error);
+    }
+}
 
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -1221,6 +1238,7 @@ async function loadLinkBio() {
 
 document.addEventListener('DOMContentLoaded', function() {
     initTheme();
+    loadSiteConfig(); // Memanggil konfigurasi dari apidocs.json
     initBatteryDetection();
     loadLinkBio();
     

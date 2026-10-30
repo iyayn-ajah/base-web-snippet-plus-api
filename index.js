@@ -86,7 +86,7 @@ router.get('/apilist', (req, res) => {
 });
 
 app.get('/linkbio.json', (req, res) => {
-    res.sendFile(path.join(__dirname, 'linkbio.json'));
+    res.sendFile(path.join(__dirname, 'frontend', 'linkbio.json'));
 });
 
 app.get('/apidocs', (req, res) => {

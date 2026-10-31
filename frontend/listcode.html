@@ -153,12 +153,7 @@
 
 <section id="social" class="container mx-auto px-4 py-8 border-t border-gray-200 dark:border-gray-800 mt-8">
   <div id="socialContainer" class="flex flex-wrap justify-center gap-3">
-    <!-- Data sosmed dari linkbio.json akan di-render di sini (dengan fallback default) -->
-    <a href="https://t.me/AfiqAjah" target="_blank" class="social-btn px-5 py-2.5">Telegram</a>
-    <a href="https://whatsapp.com/channel/0029VaoJb11LikgEpNpBty0e" target="_blank" class="social-btn px-5 py-2.5">WhatsApp</a>
-    <a href="https://www.instagram.com/iyayn_ajah" target="_blank" class="social-btn px-5 py-2.5">Instagram</a>
-    <a href="https://github.com/iyayn-ajah" target="_blank" class="social-btn px-5 py-2.5">GitHub</a>
-    <a href="https://www.youtube.com/@shikaku-doang" target="_blank" class="social-btn px-5 py-2.5">YouTube</a>
+    <!-- Data dari linkbio.json akan dimuat di sini -->
   </div>
 </section>
 
@@ -217,7 +212,7 @@
     }
   }
 
-  // 2. Load data sosial media dari linkbio.json
+  // 2. Load data sosial media dari linkbio.json (mengambil array link_bio)
   async function loadSocialLinks() {
     try {
       const res = await fetch('/linkbio.json');
@@ -226,15 +221,14 @@
       const socialContainer = document.getElementById('socialContainer');
       if (!socialContainer) return;
 
-      // Mendukung berbagai format key di linkbio.json (socials, social, links, atau array langsung)
-      const socialList = Array.isArray(data) ? data : (data.socials || data.social || data.links || []);
+      const socialList = data.link_bio || [];
 
       if (Array.isArray(socialList) && socialList.length > 0) {
-        socialContainer.innerHTML = socialList.map(item => {
-          const label = item.name || item.title || item.platform || item.label || 'Link';
-          const url = item.url || item.link || item.href || '#';
-          return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="social-btn px-5 py-2.5">${escapeHtml(label)}</a>`;
-        }).join('');
+        socialContainer.innerHTML = socialList.map(item => `
+          <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" class="social-btn px-5 py-2.5">
+            ${escapeHtml(item.name)}
+          </a>
+        `).join('');
       }
     } catch (e) {
       console.error('Error loading linkbio.json:', e);

@@ -105,6 +105,11 @@ app.get('/home.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'home.json'));
 });
 
+app.get('/listcode.json', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'listcode.json'));
+});
+
+
 
 app.use('/api', router);
 

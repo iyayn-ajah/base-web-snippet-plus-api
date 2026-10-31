@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Code Vault by Shikaku Iyayn ajah</title>
-  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg?format=png&name=900x900">
+  <title>Loading...</title>
+  <link rel="icon" type="image/x-icon" href="">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -225,28 +225,19 @@
       
       <div class="mb-5 flex justify-center">
         <img id="logoImg" 
-             src="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg" 
+             src="" 
              alt="Logo" 
              class="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-2xl shadow-md border-2 border-gray-100 dark:border-gray-700 hover:scale-105 transition-all duration-300">
       </div>
 
       <div class="text-center mb-6">
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-2 text-wrap-anywhere px-2">
-          CodesVault & API by Shikaku Iyayn ajah
+        <h2 id="headerTitle" class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-2 text-wrap-anywhere px-2">
+          Loading...
         </h2>
-        <p class="text-gray-600 dark:text-gray-300 text-sm">Free codes & API for developers</p>
+        <p id="headerSubtitle" class="text-gray-600 dark:text-gray-300 text-sm">Loading...</p>
       </div>
 
-      <!-- Bagian Tombol Dirapikan agar Lebih Sejajar/Rapi -->
-      <div class="flex flex-col sm:flex-row gap-4 mb-8 justify-center items-center">
-        <a href="/apidocs" class="jelajahi-btn btn-primary w-full sm:w-auto transition-all duration-300">
-          <span class="material-icons text-base md:text-lg">api</span> 
-          <span>Explore API</span>
-        </a>
-        <a href="/codes" class="jelajahi-btn btn-primary w-full sm:w-auto transition-all duration-300">
-          <span class="material-icons text-base md:text-lg">code</span> 
-          <span>Explore Code</span>
-        </a>
+      <div id="buttonsContainer" class="flex flex-col sm:flex-row gap-4 mb-8 justify-center items-center">
       </div>
       
       <section id="social" class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
@@ -261,7 +252,65 @@
   </div>
 
   <script>
+    const HOME_JSON_PATH = './home.json';
     const LINKBIO_JSON_PATH = './linkbio.json';
+
+    async function loadHomeContent() {
+      try {
+        const response = await fetch(HOME_JSON_PATH, { cache: 'no-cache' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        
+        const data = await response.json();
+        
+        if (data.title) {
+          document.title = data.title;
+        }
+        
+        if (data.favicon) {
+          const faviconLink = document.querySelector('link[rel="icon"]');
+          if (faviconLink) faviconLink.href = data.favicon;
+        }
+        
+        if (data.logo) {
+          document.getElementById('logoImg').src = data.logo;
+        }
+        
+        if (data.headerTitle) {
+          document.getElementById('headerTitle').textContent = data.headerTitle;
+        }
+        
+        if (data.headerSubtitle) {
+          document.getElementById('headerSubtitle').textContent = data.headerSubtitle;
+        }
+        
+        const buttonsContainer = document.getElementById('buttonsContainer');
+        buttonsContainer.innerHTML = '';
+        
+        if (Array.isArray(data.buttons)) {
+          data.buttons.forEach(btn => {
+            const a = document.createElement('a');
+            a.href = btn.url || '#';
+            a.className = 'jelajahi-btn btn-primary w-full sm:w-auto transition-all duration-300';
+            
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'material-icons text-base md:text-lg';
+            iconSpan.textContent = btn.icon || 'link';
+            
+            const textSpan = document.createElement('span');
+            textSpan.textContent = btn.text || 'Button';
+            
+            a.appendChild(iconSpan);
+            a.appendChild(textSpan);
+            buttonsContainer.appendChild(a);
+          });
+        }
+        
+        setupButtonAspectRatio();
+        
+      } catch (error) {
+        console.error('Gagal memuat home.json:', error);
+      }
+    }
 
     async function loadSocialButtons() {
       const container = document.getElementById('social-buttons');
@@ -302,12 +351,6 @@
       }
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', loadSocialButtons);
-    } else {
-      loadSocialButtons();
-    }
-
     function openDrawer() {
       const drawer = document.getElementById('drawer');
       const overlay = document.getElementById('drawerOverlay');
@@ -327,10 +370,11 @@
       }
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
-    
-    const jelajahiBtns = document.querySelectorAll('.jelajahi-btn');
+
+    let resizeTimer;
     
     function updateButtonForAspectRatio() {
+      const jelajahiBtns = document.querySelectorAll('.jelajahi-btn');
       if (!jelajahiBtns.length) return;
       const aspectRatio = window.innerWidth / window.innerHeight;
       const isWideScreen = aspectRatio >= (16/9);
@@ -346,20 +390,21 @@
       });
     }
     
-    updateButtonForAspectRatio();
-    
-    let resizeTimer;
-    window.addEventListener('resize', function() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        updateButtonForAspectRatio();
-      }, 100);
-    });
-    
-    window.addEventListener('orientationchange', function() {
-      setTimeout(updateButtonForAspectRatio, 50);
-    });
-    
+    function setupButtonAspectRatio() {
+      updateButtonForAspectRatio();
+      
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          updateButtonForAspectRatio();
+        }, 100);
+      });
+      
+      window.addEventListener('orientationchange', function() {
+        setTimeout(updateButtonForAspectRatio, 50);
+      });
+    }
+
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
     const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
@@ -423,7 +468,16 @@
     });
     
     initTheme();
-    window.dispatchEvent(new Event('resize'));
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        loadHomeContent();
+        loadSocialButtons();
+      });
+    } else {
+      loadHomeContent();
+      loadSocialButtons();
+    }
   </script>
 </body>
 </html>

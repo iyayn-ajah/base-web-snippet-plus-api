@@ -182,6 +182,13 @@ module.exports = router;
       "url": "https://web.facebook.com/shikakuiyayn"
 }
 ```
+## 📄 Setting JSON
+- 404.json
+- apidocs.json
+- home.json
+- listcode.json
+
+
 -----
 
 ## 🚀 How to *Deploy* to Vercel

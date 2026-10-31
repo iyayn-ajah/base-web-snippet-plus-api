@@ -34,12 +34,17 @@ base-web-snippet-plus-api/
 │   ├── soundcloudsearch.js
 │   └── soundcloudsearch.py
 ├── frontend/
-│   ├── home.html
-│   ├── listcode.html
+│   ├── 404.html
+│   ├── 404.json
 │   ├── apidocs.html
-│   └── 404.html
+│   ├── apidocs.json
+│   ├── home.html
+│   ├── home.json
+│   ├── linkbio.json
+│   ├── listcode.html
+│   └── listcode.json
+├── README.md
 ├── index.js
-├── linkbio.json
 ├── package.json
 └── vercel.json
 ```

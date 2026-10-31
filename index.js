@@ -101,6 +101,11 @@ app.get('/apidocs.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'apidocs.json'));
 });
 
+app.get('/home.json', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'home.json'));
+});
+
+
 app.use('/api', router);
 
 const SUPPORTED_EXTENSIONS = {

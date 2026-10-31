@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Code Vault by Shikaku Iyayn ajah</title>
-  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg?format=png&name=900x900">
+  <title id="pageTitle">Code Vault by Shikaku Iyayn ajah</title>
+  <link id="pageFavicon" rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1776345124257.jpeg?format=png&name=900x900">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -127,8 +127,8 @@
              class="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-2xl shadow-md border-2 border-gray-100 dark:border-gray-700 hover:scale-105 transition-all duration-300">
     </div>
     <div class="text-center mb-10">
-      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-3">CODES VAULT BY SHIKAKU IYAYN AJAH</h1>
-      <p class="text-gray-600 dark:text-gray-300">Free codes for developers</p>
+      <h1 id="headerTitle" class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-3">CODES VAULT BY SHIKAKU IYAYN AJAH</h1>
+      <p id="headerSubtitle" class="text-gray-600 dark:text-gray-300">Free codes for developers</p>
     </div>
 
     <div class="mb-8">
@@ -152,7 +152,8 @@
 </main>
 
 <section id="social" class="container mx-auto px-4 py-8 border-t border-gray-200 dark:border-gray-800 mt-8">
-  <div class="flex flex-wrap justify-center gap-3">
+  <div id="socialContainer" class="flex flex-wrap justify-center gap-3">
+    <!-- Data sosmed dari linkbio.json akan di-render di sini (dengan fallback default) -->
     <a href="https://t.me/AfiqAjah" target="_blank" class="social-btn px-5 py-2.5">Telegram</a>
     <a href="https://whatsapp.com/channel/0029VaoJb11LikgEpNpBty0e" target="_blank" class="social-btn px-5 py-2.5">WhatsApp</a>
     <a href="https://www.instagram.com/iyayn_ajah" target="_blank" class="social-btn px-5 py-2.5">Instagram</a>
@@ -182,6 +183,63 @@
   const codeCountSpan = document.getElementById('codeCount');
 
   let highlightStyleLoaded = false;
+
+  // 1. Load konfigurasi halaman dari listcode.json
+  async function loadPageConfig() {
+    try {
+      const res = await fetch('/listcode.json');
+      if (!res.ok) throw new Error('Failed to load listcode.json');
+      const config = await res.json();
+
+      if (config.title) {
+        document.title = config.title;
+        const pageTitleEl = document.getElementById('pageTitle');
+        if (pageTitleEl) pageTitleEl.textContent = config.title;
+      }
+      if (config.favicon) {
+        const faviconEl = document.getElementById('pageFavicon');
+        if (faviconEl) faviconEl.href = config.favicon;
+      }
+      if (config.logo) {
+        const logoEl = document.getElementById('logoImg');
+        if (logoEl) logoEl.src = config.logo;
+      }
+      if (config.headerTitle) {
+        const headerTitleEl = document.getElementById('headerTitle');
+        if (headerTitleEl) headerTitleEl.textContent = config.headerTitle;
+      }
+      if (config.headerSubtitle) {
+        const headerSubtitleEl = document.getElementById('headerSubtitle');
+        if (headerSubtitleEl) headerSubtitleEl.textContent = config.headerSubtitle;
+      }
+    } catch (e) {
+      console.error('Error loading listcode.json:', e);
+    }
+  }
+
+  // 2. Load data sosial media dari linkbio.json
+  async function loadSocialLinks() {
+    try {
+      const res = await fetch('/linkbio.json');
+      if (!res.ok) throw new Error('Failed to load linkbio.json');
+      const data = await res.json();
+      const socialContainer = document.getElementById('socialContainer');
+      if (!socialContainer) return;
+
+      // Mendukung berbagai format key di linkbio.json (socials, social, links, atau array langsung)
+      const socialList = Array.isArray(data) ? data : (data.socials || data.social || data.links || []);
+
+      if (Array.isArray(socialList) && socialList.length > 0) {
+        socialContainer.innerHTML = socialList.map(item => {
+          const label = item.name || item.title || item.platform || item.label || 'Link';
+          const url = item.url || item.link || item.href || '#';
+          return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="social-btn px-5 py-2.5">${escapeHtml(label)}</a>`;
+        }).join('');
+      }
+    } catch (e) {
+      console.error('Error loading linkbio.json:', e);
+    }
+  }
 
   function getLanguageMetadata(extension) {
     const ext = extension ? extension.replace('.', '').toLowerCase() : '';
@@ -436,6 +494,8 @@
 
   document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
   initTheme();
+  loadPageConfig();
+  loadSocialLinks();
   fetchData();
 </script>
 </body>
